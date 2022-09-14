@@ -37,6 +37,21 @@ def add_reg(reg_code):
         conn.commit()
         logging.info(f"• [DB:anchors] CREATE slot {sub_id} @ {timestamp}")
 
+# ex: update `last_mod` for `pubkey` = `<whatever>`
+# identifies row by pubkey
+def upd_value(db,key,value,lookup,identifier):
+    timestamp = datetime.now()
+    conn = sqlite3.connect(db_path, isolation_level=None)
+    conn.execute('pragma journal_mode=wal;')
+    query = f'UPDATE {db} SET \
+        "{key}" = "{value}", \
+        last_mod = "{timestamp}" \
+        WHERE {lookup} is "{identifier}";'
+    cur = conn.cursor()
+    cur.execute(query)
+    conn.commit()
+    logging.info(f"• [DB:{db}] {identifier} UPDATE {key} '{value}' @ {timestamp}")
+
 # Lookup value for an index and key
 # ex: from `anchors` get `@p` for `pubkey` = `<whatever>`
 def get_value(db,lookup,key,value):
