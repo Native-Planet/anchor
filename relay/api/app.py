@@ -13,6 +13,7 @@ import sqlite3, os, socket, json, threading, logging, ipaddress, base64, re, arg
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 
 root_domain = os.getenv('ROOT_DOMAIN')
+reg_code = os.getenv('REG_CODE')
 
 dns_check = np_db.check_dns(f'relay.{root_domain}')
 if dns_check == False:
