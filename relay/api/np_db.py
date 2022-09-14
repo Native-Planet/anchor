@@ -198,6 +198,7 @@ def reg_client(pubkey,reg_code):
             # Register new pubkey
             upd_value('anchors','status','registered','sub_id',code_hash)
         upd_value('anchors','pubkey',pubkey,'sub_id',code_hash)
+        upd_value('services','status','creating','pubkey',pubkey)
         threading.Thread(target=rectify_svc_list, name='rectify', args=(pubkey,)).start()
         error = 0
         debug = None
@@ -234,6 +235,9 @@ def rectify_svc_list(pubkey):
     if peer_ip == False:
         wg_api.new_peer(pubkey=pubkey,label=None)
         peer_ip = wg_api.check_peer(pubkey)
+    wg_conf = wg_api.get_conf(pubkey)
+    upd_value('anchors','conf',wg_conf,'pubkey',pubkey)
+    upd_value('anchors','status','ready','pubkey',pubkey)
     if svcs['subdomains'] != []:
         for svc in svcs['subdomains']:
             # Build a list of subdomains
