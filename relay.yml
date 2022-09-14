@@ -1,0 +1,149 @@
+---
+    - hosts: relay
+      become: yes
+      environment:
+        ROOT_DOMAIN: "{{ ROOT_DOMAIN }}"
+        HEADER_AUTH: "{{ HEADER_AUTH }}"
+        REG_CODE: "{{ REG_CODE }}"
+      gather_facts: true
+      tasks:
+      
+      - name: Install packages
+        remote_user: root
+        apt:
+          name: ['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'git', 'iptables', 'resolvconf', 'linux-headers-generic', 'wireguard', 'debian-keyring', 'debian-archive-keyring', 'apt-transport-https']
+          state: present
+          update_cache: yes
+        tags:
+          - docker
+    
+      - name: Add Docker PGP
+        remote_user: root
+        apt_key:
+          url: https://download.docker.com/linux/ubuntu/gpg
+          state: present
+        tags:
+          - docker
+    
+      - name: Verify fingerprint
+        remote_user: root
+        apt_key:
+          id: 0EBFCD88
+          state: present
+        tags:
+          - docker
+      
+      - name: Add Docker repo
+        remote_user: root
+        apt_repository:
+          repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
+          state: present
+          update_cache: yes
+        tags:
+          - docker
+    
+      - name: Update apt
+        remote_user: root
+        apt:
+          update_cache: yes
+        tags:
+          - docker
+    
+      - name: Install docker
+        remote_user: root
+        apt:
+          name: docker-ce
+          state: present
+          update_cache: yes
+        tags:
+          - docker
+    
+      - name: Add remote user to "docker" group
+        remote_user: root
+        user:
+          name: root
+          groups: "docker"
+          append: yes
+        tags:
+          - docker
+    
+      - name: Install docker-compose
+        remote_user: root
+        get_url: 
+          url : https://github.com/docker/compose/releases/download/v2.9.0/docker-compose-linux-x86_64
+          dest: /usr/local/bin/docker-compose
+          mode: 'u+x,g+x'
+    
+      - name: Clone anchor git
+        remote_user: root
+        git:
+          repo: "https://github.com/Native-Planet/relay.git"
+          dest: "{{ ansible_env.HOME }}/relay"
+          version: master
+          accept_hostkey: yes
+          key_file: "{{ ansible_env.HOME }}/.ssh/key.pem"
+    
+      - name: Write env vars
+        remote_user: root
+        shell: printf 'HEADER_AUTH={{ HEADER_AUTH }}\n
+          ROOT_DOMAIN={{ ROOT_DOMAIN }}\n
+          REG_CODE={{ REG_CODE }}' > "{{ ansible_env.HOME }}/relay/relay/.env"
+    
+      - name: Remove leading spaces from env file
+        remote_user: root
+        ansible.builtin.replace:
+          path: "{{ ansible_env.HOME }}/relay/relay/.env"
+          regexp: '^[ \t]*'
+          replace: ''
+    
+      - name: Write rebuild script
+        remote_user: root
+        shell: printf '#!/bin/bash\n
+          export HEADER_AUTH={{ HEADER_AUTH }}\n
+          export ROOT_DOMAIN={{ ROOT_DOMAIN }}
+          export REG_CODE={{ REG_CODE }}
+          docker-compose down\n
+          git pull\n
+          docker-compose up --build -d\n
+          docker logs api -f' > "{{ ansible_env.HOME }}/relay/relay/rebuild"
+    
+      - name: Remove leading spaces from rebuild script
+        remote_user: root
+        ansible.builtin.replace:
+          path: "{{ ansible_env.HOME }}/relay/relay/rebuild"
+          regexp: '^[ \t]*'
+          replace: ''
+    
+      - name: Write to bashrc
+        remote_user: root
+        shell: printf 'cd {{ ansible_env.HOME }}/relay/relay && ./logs' >> "{{ ansible_env.HOME }}/.bashrc"
+    
+      - name: +x rebuild
+        file:
+          dest: "{{ ansible_env.HOME }}/relay/relay/rebuild"
+          mode: a+x
+    
+      - name: Execute composition
+        command: docker-compose up -d
+        become: yes
+        args:
+          chdir: "{{ ansible_env.HOME }}/relay/relay"
+    
+      - name: Allow HTTP
+        ufw:
+          rule: allow
+          port: '80'
+          proto: tcp
+    
+      - name: Allow HTTPS
+        ufw:
+          rule: allow
+          port: '443'
+          proto: tcp
+      
+      - name: Allow UDP
+        ufw:
+          rule: allow
+          port: 10000:65535
+          proto: udp
+    

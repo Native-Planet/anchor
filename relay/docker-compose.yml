@@ -1,0 +1,78 @@
+---
+version: "3.3"
+services:
+  wireguard:
+    build: 
+      context: wg
+      dockerfile: Dockerfile
+    container_name: wg
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+      - SERVERURL=${ROOT_DOMAIN}
+      - SERVERPORT=51820
+      - PEERS=1
+      - PEERDNS=1.1.1.1
+      - INTERNAL_SUBNET=10.13.13.0
+      - ALLOWEDIPS=0.0.0.0/0
+      - LOG_CONFS=true
+      - HEADER_AUTH
+    volumes:
+      - ./wg/config:/config
+      - /lib/modules:/lib/modules
+    ports:
+      - 51820:51820/udp
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    networks:
+      wgnet:
+        ipv4_address: 172.20.0.2
+    restart: unless-stopped
+  caddy:
+    build:
+      context: caddy
+      dockerfile: Dockerfile
+    cap_add:
+      - NET_ADMIN
+    container_name: caddy
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./caddy/data:/data
+      - ./caddy/config:/config/caddy
+      - ./caddy/www:/www
+    networks:
+      wgnet:
+        ipv4_address: 172.20.0.4
+    restart: unless-stopped
+  api:
+    build: 
+      context: api
+      dockerfile: Dockerfile
+    depends_on:
+      - wireguard
+      - caddy
+    container_name: api
+    environment:
+      - HEADER_AUTH
+      - ROOT_DOMAIN
+    volumes:
+      - ./wg/config:/etc/wireguard/
+    networks:
+      wgnet:
+        ipv4_address: 172.20.0.3
+    restart: unless-stopped
+
+networks:
+  wgnet:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/24
+          gateway: 172.20.0.1

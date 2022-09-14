@@ -1,0 +1,26 @@
+[
+    {
+            "id": "restart-wg",
+            "execute-command": "/etc/webhook/restart.sh",
+            "response-message": "Success -- interface restarting",
+"trigger-rule":
+{
+    "or":
+    [
+    { "match":
+    {
+        "type": "value",
+        "value": "HOOK_AUTH",
+        "parameter": {
+            "source": "url",
+            "name": "token"
+        }
+    } },
+    { "match":
+    {
+        "type": "ip-whitelist", "ip-range": "172.20.0.3/32"
+    }
+    }]
+}
+}
+]
