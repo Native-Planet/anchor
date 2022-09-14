@@ -61,8 +61,10 @@ services:
     environment:
       - HEADER_AUTH
       - ROOT_DOMAIN
+      - DB_PATH=/api/db/anchors.db
     volumes:
       - ./wg/config:/etc/wireguard/
+      - ./db:/api/db
     networks:
       wgnet:
         ipv4_address: 172.20.0.3
