@@ -3,7 +3,6 @@ from time import sleep
 import urllib.request, requests, np_db
 
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
-hostname = os.getenv('HOSTNAME')
 root_domain = os.getenv('ROOT_DOMAIN')
 
 # Caddy API call functions

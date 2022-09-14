@@ -38,7 +38,7 @@ np_db.db.execute('CREATE TABLE IF NOT EXISTS services (uid INTEGER, \
             PRIMARY KEY ("uid" AUTOINCREMENT) );')
 
 # Register subdomain for node API
-if caddy_api.check_upstream(hostname,'api:8090') != True:
+if caddy_api.check_upstream(f'relay.{root_domain}','api:8090') != True:
     caddy_api.add_reverse_proxy('relay', host=f'{root_domain}', upstream='api:8090')
     caddy_api.add_502()
 
