@@ -61,6 +61,7 @@ services:
     environment:
       - HEADER_AUTH
       - ROOT_DOMAIN
+      - REG_CODE
       - DB_PATH=/api/db/anchors.db
     volumes:
       - ./wg/config:/etc/wireguard/

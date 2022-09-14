@@ -18,13 +18,13 @@ reg_code = os.getenv('REG_CODE')
 dns_check = np_db.check_dns(f'relay.{root_domain}')
 if dns_check == False:
     print('Please configure DNS (see readme)')
-    quit
+    raise SystemExit
 if reg_code != None:
     reg_id = hash(reg_code)
     np_db.add_reg(reg_id)
 else:
     print('Please provide a registration code (see readme)')
-    quit
+    raise SystemExit
 
 np_db.db.execute('CREATE TABLE IF NOT EXISTS anchors (uid INTEGER, \
             sub_id TEXT NULL, pubkey TEXT NULL, conf TEXT NULL, \
