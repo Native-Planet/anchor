@@ -1,4 +1,4 @@
-import json, os, logging, sg_api
+import json, os, logging
 from time import sleep
 import urllib.request, requests, np_db
 
@@ -226,21 +226,6 @@ def api(path='', method='GET', string=None, data=None):
 
     except urllib.error.HTTPError as e:
         # status=500 returned for PUT value and other configuration errors
-        return dict(message=str(e), path=path)
-
-    except json.decoder.JSONDecodeError as e:
-        ipaddr = get_value('endpoints','ipaddr','instanceid',instanceid)
-        time = timestamp = datetime.now()
-        msg = f'''
-        <h3>Caddy error on {hostname}</h3>:<br>
-        {timestamp}<br>
-        IP: <b<{ipaddr}</b><br>
-        Instance: <b>{hostname} / {instanceid}</b><br>
-        Error: {e}<br>
-        Path: {path}<br>
-        This may indicate an issue with the Caddy API locking up. Restart the container!
-        '''
-        sg_api.send_email('Caddy error',msg)
         return dict(message=str(e), path=path)
     
     except Exception as e:
