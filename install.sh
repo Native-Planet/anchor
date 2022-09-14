@@ -18,7 +18,7 @@ SSH_PUB=`ssh-keygen -f ${SSH_KEY} -y`
 printf "[relay]\nrelay.${ROOT_DOMAIN}\n\n[relay:vars]\nansible_user=\"root\"\nansible_ssh_private_key_file=${SSH_KEY}" > hosts
 ssh-keyscan -H relay.${ROOT_DOMAIN} >> ~/.ssh/known_hosts
 ssh -i ${SSH_KEY} -o "StrictHostKeyChecking=no" \
-        root@relay.${ROOT_DOMAIN} "sed -i \'s@PasswordAuthentication yes@PasswordAuthentication no@g\' /etc/ssh/sshd_config"
+        root@relay.${ROOT_DOMAIN} "sed -i 's@PasswordAuthentication yes@PasswordAuthentication no@g' /etc/ssh/sshd_config"
 ssh -i ${SSH_KEY} -o "StrictHostKeyChecking=no" \
         root@relay.${ROOT_DOMAIN} "systemctl restart sshd"
 ssh -i ${SSH_KEY} root@relay.${ROOT_DOMAIN} \
