@@ -22,7 +22,6 @@ def dict_factory(cursor, row):
     return d
 
 # Create DB record for new client
-# Update lease on existing
 def add_reg(reg_code):
     sub_id = hash(reg_code)
     exists = get_value('anchors','uid','sub_id',sub_id)
@@ -37,8 +36,7 @@ def add_reg(reg_code):
         cur.execute(query)
         conn.commit()
         logging.info(f"• [DB:anchors] CREATE slot {sub_id} @ {timestamp}")
-    else:
-        upd_value('anchors','lease',lease,'uid',exists)
+
 # Lookup value for an index and key
 # ex: from `anchors` get `@p` for `pubkey` = `<whatever>`
 def get_value(db,lookup,key,value):
@@ -126,6 +124,21 @@ def get_client_svcs(pubkey):
         logging.exception(e)
         return []
 
+# Replace a value with NULL
+def nul_value(db,key,lookup,identifier):
+    timestamp = datetime.now()
+    conn = sqlite3.connect(db_path, isolation_level=None)
+    conn.execute('pragma journal_mode=wal;')
+    query = f'UPDATE {db} SET \
+        "{key}" = ?, \
+        last_mod = "{timestamp}" \
+        WHERE {lookup} is "{identifier}";'
+    cur = conn.cursor()
+    cur.execute(query,(None,))
+    conn.commit()
+    logging.info(f"• [DB:{db}] {identifier} NULL {key} @ {timestamp}")
+
+
 
 # █▀▄ █▄░█ █▀
 # █▄▀ █░▀█ ▄█
@@ -145,6 +158,46 @@ def check_dns(url):
 
 # █▀ █░█ █▀▀
 # ▄█ ▀▄▀ █▄▄
+
+# Register pubkey with reg code & update prev services
+def reg_client(pubkey,reg_code):
+    code_hash = hash(reg_code)
+    code_exists = get_value('anchors','uid','sub_id',code_hash)
+    key_exists = get_values('anchors','uid','pubkey',pubkey)
+    # If reg code is valid:
+    if code_exists != None:
+        # Check if it's already assoc with a pubkey
+        prev_pubkey = get_value('anchors','pubkey','uid',code_exists)
+        # There can only be one
+        if (prev_pubkey != None) and (pubkey != prev_pubkey):
+            for reg in key_exists:
+                # If new pubkey, blank the old one and update the services
+                nul_value('anchors','pubkey','uid',reg)
+                nul_value('anchors','conf','uid',reg)
+                prev_svc = get_values('services','uid','pubkey',prev_pubkey)
+                if prev_svc != None:
+                    for svc in prev_svc:
+                        upd_value('services','pubkey',pubkey,'uid',svc)
+                        upd_value('services','status','creating','uid',svc)
+            # Register new pubkey
+            upd_value('anchors','status','registered','sub_id',code_hash)
+        upd_value('anchors','pubkey',pubkey,'sub_id',code_hash)
+        threading.Thread(target=rectify_svc_list, name='rectify', args=(pubkey,)).start()
+        error = 0
+        debug = None
+        reqstatus = 200
+    else:
+        logging.warning(f'• {pubkey} provided invalid reg code {reg_code}')
+        error = 1
+        debug = 'Invalid registration code'
+        reqstatus = 400
+    result = {
+        'error':error,
+        'debug':debug,
+        'reqstatus':reqstatus
+    }
+    return result
+
 def rectify_svc_list(pubkey):
     '''
     get pubkey
@@ -159,33 +212,32 @@ def rectify_svc_list(pubkey):
     services, minios = {}, {}
     peerlist = wg_api.peer_list()
     del_peers = []
-    for pubkey in clients:
-        svcs = get_client_svcs(pubkey)
+    svcs = get_client_svcs(pubkey)
+    peer_ip = wg_api.check_peer(pubkey)
+    # Make sure we have the pubkey registered
+    if peer_ip == False:
+        wg_api.new_peer(pubkey=pubkey,label=None)
         peer_ip = wg_api.check_peer(pubkey)
-        # Make sure we have the pubkey registered
-        if peer_ip == False:
-            wg_api.new_peer(pubkey=pubkey,label=None)
-            peer_ip = wg_api.check_peer(pubkey)
-        if svcs['subdomains'] != []:
-            for svc in svcs['subdomains']:
-                # Build a list of subdomains
-                url = svc['url']
-                svc_type = svc['svc_type']
-                port = svc['port']
-                # Add missing DNS entries
-                if 'ames.' not in url:
-                    dns_check = check_dns(f'url.{root_domain}')
-                    if dns_check == False:
-                        logging.warning('A record does not match public IP!')
-                subd = url.removesuffix(f'.{root_domain}')
-                # Append to dictionary of all services
-                # We don't want a reverse proxy for ames
-                if 'relay' not in services:
-                    services['relay'] = 'api:8090'
-                if (svc_type not in no_proxy) and (port != None):
-                    services[subd]=f'{peer_ip}:{port}'
-                if (svc_type == 'minio-console') and (port != None):
-                    minios[subd]=f'{peer_ip}:{port}'
+    if svcs['subdomains'] != []:
+        for svc in svcs['subdomains']:
+            # Build a list of subdomains
+            url = svc['url']
+            svc_type = svc['svc_type']
+            port = svc['port']
+            # Add missing DNS entries
+            if 'ames.' not in url:
+                dns_check = check_dns(f'url.{root_domain}')
+                if dns_check == False:
+                    logging.warning('A record does not match public IP!')
+            subd = url.removesuffix(f'.{root_domain}')
+            # Append to dictionary of all services
+            # We don't want a reverse proxy for ames
+            if 'relay' not in services:
+                services['relay'] = 'api:8090'
+            if (svc_type not in no_proxy) and (port != None):
+                services[subd]=f'{peer_ip}:{port}'
+            if (svc_type == 'minio-console') and (port != None):
+                minios[subd]=f'{peer_ip}:{port}'
 
         # Create a list of current Caddy routes
         for route in caddy_conf:
@@ -220,6 +272,7 @@ def rectify_svc_list(pubkey):
 
     for pubkey in clients:
         upd_value('services','status','ok','pubkey',pubkey)
+
 
 def valid_wg(pubkey):
     try:

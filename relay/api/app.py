@@ -69,8 +69,7 @@ def register_client():
         action = 'register',
         debug = result['debug'],
         error = result['error'],
-        pubkey = pubkey,
-        lease = result['lease']
+        pubkey = pubkey
     ),result['reqstatus']
 
 
@@ -89,7 +88,6 @@ def retrieve_info():
     debug = 'Pubkey is not registered'
     error = 1
     status = 'No record'
-    lease = None
     reqstatus = 400
     subdomains = []
 
@@ -99,7 +97,6 @@ def retrieve_info():
         anchor = np_db.get_row('anchors','pubkey',pubkey)[0]
         conf = anchor['conf']
         status = anchor['status']
-        lease = anchor['lease']
         debug = None
         error = 0
         svc_list = np_db.get_values('services','uid','pubkey',pubkey)
@@ -125,7 +122,6 @@ def retrieve_info():
     'error':error,
     'pubkey':pubkey,
     'status':status,
-    'lease':lease,
     'subdomains':subdomains}
     return jsonify(response),reqstatus
 
