@@ -165,8 +165,5 @@ def add_anchor():
 
 
 if __name__ == "__main__":
-    if (run_env == 'dev'):
-        app.run(debug=True, threaded=True, port=8090)
-    elif (run_env == 'prod'):
-        http_server = WSGIServer(('0.0.0.0', 8090), app)
-        http_server.serve_forever()
+    http_server = WSGIServer(('0.0.0.0', 8090), app)
+    http_server.serve_forever()
