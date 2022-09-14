@@ -15,17 +15,6 @@ logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 root_domain = os.getenv('ROOT_DOMAIN')
 reg_code = os.getenv('REG_CODE')
 
-dns_check = np_db.check_dns(f'relay.{root_domain}')
-if dns_check == False:
-    print('Please configure DNS (see readme)')
-    raise SystemExit
-if reg_code != None:
-    reg_id = hash(reg_code)
-    np_db.add_reg(reg_id)
-else:
-    print('Please provide a registration code (see readme)')
-    raise SystemExit
-
 np_db.db.execute('CREATE TABLE IF NOT EXISTS anchors (uid INTEGER, \
             sub_id TEXT NULL, pubkey TEXT NULL, conf TEXT NULL, \
             status TEXT NULL, \
@@ -36,6 +25,17 @@ np_db.db.execute('CREATE TABLE IF NOT EXISTS services (uid INTEGER, \
             svc_type TEXT NULL, ipaddr TEXT NULL, \
             status TEXT NULL, created TIMESTAMP NULL, last_mod TIMESTAMP NULL, \
             PRIMARY KEY ("uid" AUTOINCREMENT) );')
+
+dns_check = np_db.check_dns(f'relay.{root_domain}')
+if dns_check == False:
+    print('Please configure DNS (see readme)')
+    raise SystemExit
+if reg_code != None:
+    reg_id = hash(reg_code)
+    np_db.add_reg(reg_id)
+else:
+    print('Please provide a registration code (see readme)')
+    raise SystemExit
 
 # Register subdomain for node API
 if caddy_api.check_upstream(f'relay.{root_domain}','api:8090') != True:
