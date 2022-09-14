@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from flask import request
 from time import sleep
-import sqlite3, os, json, base64, logging, requests, socket, caddy_api, wg_api, sg_api
+import sqlite3, os, json, base64, logging, requests, socket, caddy_api, wg_api
 from requests import get
 
 

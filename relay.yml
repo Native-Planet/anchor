@@ -100,8 +100,8 @@
         remote_user: root
         shell: printf '#!/bin/bash\n
           export HEADER_AUTH={{ HEADER_AUTH }}\n
-          export ROOT_DOMAIN={{ ROOT_DOMAIN }}
-          export REG_CODE={{ REG_CODE }}
+          export ROOT_DOMAIN={{ ROOT_DOMAIN }}\n
+          export REG_CODE={{ REG_CODE }}\n
           docker-compose down\n
           git pull\n
           docker-compose up --build -d\n
