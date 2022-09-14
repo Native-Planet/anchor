@@ -279,15 +279,7 @@ def rectify_svc_list(pubkey):
                 caddy_api.add_minio(subd, host=f'{root_domain}',upstream=upstr)
                 sleep(3)
 
-        # Delete pubkeys that aren't on client list
-        for peer in peerlist:
-            if peer not in clients:
-                del_peers.append(peer)
-        if del_peers != []:
-            wg_api.del_peer(del_peers)
-
-    for pubkey in clients:
-        upd_value('services','status','ok','pubkey',pubkey)
+    upd_value('services','status','ok','pubkey',pubkey)
 
 
 def valid_wg(pubkey):
