@@ -186,7 +186,7 @@ def reg_client(pubkey,reg_code):
         # There can only be one
         if (pubkey != prev_pubkey) and (prev_pubkey != None):
             # If new pubkey, blank the old one and update the services
-            nul_value('anchors','conf','pubkey',pubkey)
+            nul_value('anchors','conf','pubkey',prev_pubkey)
             prev_svc = get_values('services','uid','pubkey',prev_pubkey)
             if prev_svc != None:
                 for svc in prev_svc:
