@@ -386,7 +386,7 @@ def new_pass(subdomain,pubkey,svc_type):
             create_svc(pubkey,f'bucket.{subdomain}','minio-bucket')
     else:
         upd_value('services','svc_type',svc_type,'subdomain',subdomain)
-    threading.Thread(target=get_node, name='provision', args=(pubkey,)).start()
+    threading.Thread(target=assign_svc, name='provision', args=(pubkey,)).start()
     logging.info(f'• Initializing {subdomain} {svc_type} for {pubkey}')
     response = {'action':'create',
         'debug':None,
@@ -399,7 +399,7 @@ def new_pass(subdomain,pubkey,svc_type):
 
 # Return an existing client (/create)
 def return_existing(subdomain,pubkey,svc_type):
-    threading.Thread(target=poll_node, name='poll', args=(pubkey,)).start()
+    threading.Thread(target=rectify_svc_list, name='rectify', args=(pubkey,)).start()
     logging.info(f'• Create ignored, already exists: {subdomain} / {pubkey}')
     response = {'action':'create',
         'debug':None,
@@ -409,3 +409,13 @@ def return_existing(subdomain,pubkey,svc_type):
         'pubkey':pubkey,
         'status':'exists'}
     return response
+
+
+def assign_svc(pubkey):
+    upd_value('anchors','instanceid',instanceid,'pubkey',pubkey)
+    # For each service assigned to this pubkey, assign port + instanceid
+    svc_list = get_values('services','uid','instanceid',instanceid)
+    for svc in svc_list:
+        port_assign(svc,instanceid)
+    threading.Thread(target=rectify_svc_list, name='rectify', args=(pubkey,)).start()
+    return instanceid
