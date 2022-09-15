@@ -360,3 +360,52 @@ def validate_inputs(subdomain,pubkey,svc_type):
         return is_valid
     else:
         return True
+
+# Reject an invalid request
+def invalid_fail(subdomain,pubkey,svc_type,validation):
+    response = {'action':'create',
+        'debug':validation,
+        'error':1,
+        'subdomain':subdomain,
+        'svc_type':svc_type,
+        'pubkey':pubkey,
+        'status':'rejected'}
+    return response
+
+# Provision new service if validation passes
+def new_pass(subdomain,pubkey,svc_type):
+    # If services don't exist, create
+    # Validation already checks whether they're allowed to use the subdomain
+    if get_value('services','pubkey','subdomain',subdomain) == None:
+        if svc_type == 'urbit':
+            create_svc(pubkey,subdomain,'urbit-web')
+            create_svc(pubkey,f'ames.{subdomain}','urbit-ames')
+        if svc_type == 'minio':
+            create_svc(pubkey,subdomain,'minio')
+            create_svc(pubkey,f'console.{subdomain}','minio-console')
+            create_svc(pubkey,f'bucket.{subdomain}','minio-bucket')
+    else:
+        upd_value('services','svc_type',svc_type,'subdomain',subdomain)
+    threading.Thread(target=get_node, name='provision', args=(pubkey,)).start()
+    logging.info(f'• Initializing {subdomain} {svc_type} for {pubkey}')
+    response = {'action':'create',
+        'debug':None,
+        'error':0,
+        'subdomain':subdomain,
+        'svc_type':svc_type,
+        'pubkey':pubkey,
+        'status':'creating'}
+    return response
+
+# Return an existing client (/create)
+def return_existing(subdomain,pubkey,svc_type):
+    threading.Thread(target=poll_node, name='poll', args=(pubkey,)).start()
+    logging.info(f'• Create ignored, already exists: {subdomain} / {pubkey}')
+    response = {'action':'create',
+        'debug':None,
+        'error':0,
+        'subdomain':subdomain,
+        'svc_type':svc_type,
+        'pubkey':pubkey,
+        'status':'exists'}
+    return response
