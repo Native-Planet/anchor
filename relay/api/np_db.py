@@ -300,8 +300,8 @@ def valid_wg(pubkey):
         return False
 
 # Determine random unused port for service
-def port_gen(svc_type,instanceid):
-    port_records = get_values('services','port','instanceid',instanceid)
+def port_gen(svc_type):
+    exists = get_values('services','port','svc_type',svc_type)
     if port_records == None:
         port_records = []
     else:
@@ -433,7 +433,7 @@ def port_assign(svc):
             root = subdomain.split('.')[2]
             port = get_value('services','port','subdomain',f's3.{root}')
             if port == None:
-                port = port_gen('minio',instanceid)
+                port = port_gen('minio')
                 upd_value('services','port',port,'subdomain',f's3.{root}')
                 upd_value('services','port',port,'uid',svc)
             else:
