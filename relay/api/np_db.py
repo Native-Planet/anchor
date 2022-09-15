@@ -197,11 +197,6 @@ def reg_client(pubkey,reg_code):
             upd_value('anchors','status','registered','reg_id',code_hash)
         upd_value('anchors','pubkey',pubkey,'reg_id',code_hash)
         upd_value('services','status','creating','pubkey',pubkey)
-        exists_conf = get_value('anchors','conf','pubkey',pubkey)
-        wg_conf = wg_api.get_conf(pubkey)
-        if exists_conf != wg_conf:
-            upd_value('anchors','conf',wg_conf,'pubkey',pubkey)
-            upd_value('anchors','status','ready','pubkey',pubkey)
         threading.Thread(target=rectify_svc_list, name='rectify', args=(pubkey,)).start()
         error = 0
         debug = None

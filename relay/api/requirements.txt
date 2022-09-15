@@ -11,4 +11,3 @@ argparse==1.4.0
 requests==2.28.1
 dnspython==2.2.1
 grequests==0.6.0
-sendgrid==6.9.7
