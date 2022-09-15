@@ -3,16 +3,15 @@
 # Edit these:
 # The main part of your domain (mydomain.com)
 ROOT_DOMAIN=nativeplanet.live
-# A strong random password (you won't need to use it)
-HEADER_AUTH=asdasdasd
 # A strong random password (you will need to remember it)
-REG_CODE=dsadsadas
+REG_CODE=Capacity-Santa2-Sneer-Dominoes
 # Path to the SSH key for your VPS
 SSH_KEY="~/.ssh/key.pem"
-
-
+######
 # Don't edit below
 ######
+HEADER_AUTH=$(echo $RANDOM | md5sum | head -c 20)
+sudo apt update && sudo apt install -y python3 ansible
 chmod 600 ${SSH_KEY}
 SSH_PUB=`ssh-keygen -f ${SSH_KEY} -y`
 printf "[relay]\nrelay.${ROOT_DOMAIN}\n\n[relay:vars]\nansible_user=\"root\"\nansible_ssh_private_key_file=${SSH_KEY}" > hosts
