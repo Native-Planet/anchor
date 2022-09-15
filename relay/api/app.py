@@ -101,6 +101,7 @@ def retrieve_info():
         status = anchor['status']
         debug = None
         error = 0
+        reqstatus = 200
         svc_list = np_db.get_values('services','uid','pubkey',pubkey)
         if svc_list != None:
             for svc in svc_list:
@@ -114,7 +115,6 @@ def retrieve_info():
                 'svc_type': row['svc_type'],
                 'port': row['port']}
                 subdomains.append(svc_object)
-                reqstatus = 200
         else:
             subdomains = []
 

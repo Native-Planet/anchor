@@ -417,3 +417,27 @@ def assign_svc(pubkey):
     for svc in svc_list:
         port_assign(svc)
     threading.Thread(target=rectify_svc_list, name='rectify', args=(pubkey,)).start()
+
+# Assign ports to services without them (takes service uid)
+def port_assign(svc):
+    svc_type = get_value('services','svc_type','uid',svc)
+    port_exists = get_value('services','port','uid',svc)
+    ipaddr = get_value('endpoints','ipaddr','instanceid',instanceid)
+    # Only assign ports to services that don't already have one
+    if port_exists == None:
+        if svc_type not in ['minio','minio-bucket']:
+            port = port_gen(svc_type,instanceid)
+            upd_value('services','port',port,'uid',svc)
+        # Make sure s3.{sub} and bucket.s3.{sub} have the same port
+        elif svc_type == 'minio-bucket':
+            subdomain = get_value('services','subdomain','uid',svc)
+            root = subdomain.split('.')[2]
+            port = get_value('services','port','subdomain',f's3.{root}')
+            if port == None:
+                port = port_gen('minio',instanceid)
+                upd_value('services','port',port,'subdomain',f's3.{root}')
+                upd_value('services','port',port,'uid',svc)
+            else:
+                upd_value('services','port',port,'uid',svc)
+        upd_value('services','ipaddr',ipaddr,'uid',svc)
+        upd_value('services','status','creating','uid',svc)
