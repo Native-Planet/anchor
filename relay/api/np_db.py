@@ -299,30 +299,6 @@ def valid_wg(pubkey):
         logging.exception(e)
         return False
 
-# Determine random unused port for service
-def port_gen(svc_type):
-    port_records = get_values('services','port','svc_type',svc_type)
-    if port_records == None:
-        port_records = []
-    else:
-        if svc_type == 'urbit-web':
-            port = random.randrange(80,9999)
-            while port in port_records:
-                port = random.randrange(80,9999)
-            return port
-        if svc_type == 'urbit-ames':
-            port = random.randrange(30000,40000)
-            while port in port_records:
-                port = random.randrange(30000,40000)
-            return port
-        if svc_type in ['minio','minio-console','minio-bucket']:
-            port = random.randrange(10000,15000)
-            while port in port_records:
-                port = random.randrange(10000,15000)
-            return port
-        else:
-            return None
-
 # Make sure input is a valid subdomain
 def subdomain_validate(domain):
     result = re.match('''
@@ -439,3 +415,28 @@ def port_assign(svc):
             else:
                 upd_value('services','port',port,'uid',svc)
         upd_value('services','status','creating','uid',svc)
+
+
+# Determine random unused port for service
+def port_gen(svc_type):
+    port_records = get_values('services','port','svc_type',svc_type)
+    if port_records == None:
+        port_records = []
+    else:
+        if svc_type == 'urbit-web':
+            port = random.randrange(80,9999)
+            while port in port_records:
+                port = random.randrange(80,9999)
+            return port
+        if svc_type == 'urbit-ames':
+            port = random.randrange(30000,40000)
+            while port in port_records:
+                port = random.randrange(30000,40000)
+            return port
+        if svc_type in ['minio','minio-console','minio-bucket']:
+            port = random.randrange(10000,15000)
+            while port in port_records:
+                port = random.randrange(10000,15000)
+            return port
+        else:
+            return None
