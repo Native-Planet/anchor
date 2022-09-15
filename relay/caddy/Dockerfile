@@ -11,7 +11,7 @@ WORKDIR /
 RUN rm /usr/bin/caddy
 COPY --from=builder /caddy/cmd/caddy/caddy /usr/bin/caddy
 RUN chmod +x /usr/bin/caddy
-RUN apk add --no-cache libcap
+RUN apk add --no-cache libcap curl
 RUN setcap 'cap_net_bind_service=+ep' /usr/bin/caddy
 COPY ./default_config.json /etc/caddy/
 RUN echo "#!/bin/ash" > /init
