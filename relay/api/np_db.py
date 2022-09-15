@@ -235,13 +235,16 @@ def rectify_svc_list(pubkey):
     if peer_ip == False:
         wg_api.new_peer(pubkey=pubkey,label=None)
         peer_ip = wg_api.check_peer(pubkey)
+    exists_conf = get_value('anchors','conf','pubkey',pubkey)
     wg_conf = wg_api.get_conf(pubkey)
-    upd_value('anchors','conf',wg_conf,'pubkey',pubkey)
-    upd_value('anchors','status','ready','pubkey',pubkey)
+    if exists_conf != wg_conf:
+        upd_value('anchors','conf',wg_conf,'pubkey',pubkey)
+        upd_value('anchors','status','ready','pubkey',pubkey)
     if svcs['subdomains'] != []:
         for svc in svcs['subdomains']:
             # Build a list of subdomains
             url = svc['url']
+            subd = url.removesuffix(f'.{root_domain}')
             svc_type = svc['svc_type']
             port = svc['port']
             # Add missing DNS entries
@@ -249,7 +252,9 @@ def rectify_svc_list(pubkey):
                 dns_check = check_dns(url)
                 if dns_check == False:
                     logging.warning('A record does not match public IP!')
-            subd = url.removesuffix(f'.{root_domain}')
+            if (port == None) or (port == 'null'):
+                port = port_gen('svc_type')
+                upd_value('services','port','subdomain',subd)
             # Append to dictionary of all services
             # We don't want a reverse proxy for ames
             if 'relay' not in services:
@@ -362,7 +367,7 @@ def new_pass(subdomain,pubkey,svc_type):
             create_svc(pubkey,f'bucket.{subdomain}','minio-bucket')
     else:
         upd_value('services','svc_type',svc_type,'subdomain',subdomain)
-    threading.Thread(target=assign_svc, name='provision', args=(pubkey,)).start()
+    assign_svc(pubkey)
     logging.info(f'• Initializing {subdomain} {svc_type} for {pubkey}')
     response = {'action':'create',
         'debug':None,
@@ -392,7 +397,6 @@ def assign_svc(pubkey):
     svc_list = get_values('services','uid','pubkey',pubkey)
     for svc in svc_list:
         port_assign(svc)
-    threading.Thread(target=rectify_svc_list, name='rectify', args=(pubkey,)).start()
 
 # Assign ports to services without them (takes service uid)
 def port_assign(svc):
