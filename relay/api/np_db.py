@@ -197,6 +197,11 @@ def reg_client(pubkey,reg_code):
             upd_value('anchors','status','registered','reg_id',code_hash)
         upd_value('anchors','pubkey',pubkey,'reg_id',code_hash)
         upd_value('services','status','creating','pubkey',pubkey)
+        exists_conf = get_value('anchors','conf','pubkey',pubkey)
+        wg_conf = wg_api.get_conf(pubkey)
+        if exists_conf != wg_conf:
+            upd_value('anchors','conf',wg_conf,'pubkey',pubkey)
+            upd_value('anchors','status','ready','pubkey',pubkey)
         threading.Thread(target=rectify_svc_list, name='rectify', args=(pubkey,)).start()
         error = 0
         debug = None
@@ -258,7 +263,7 @@ def rectify_svc_list(pubkey):
             # We don't want a reverse proxy for ames
             if 'relay' not in services:
                 services['relay'] = 'api:8090'
-            if (db_debug == 'true') and ('db' not in services):
+            if (debug_db == 'true') and ('db' not in services):
                  services['db'] = 'dbweb:8080'
             if (svc_type not in no_proxy) and (port != None):
                 services[subd]=f'{peer_ip}:{port}'
