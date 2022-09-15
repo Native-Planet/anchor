@@ -32,7 +32,7 @@ git clone https://github.com/Native-Planet/relay.git
 cd relay
 ```
 
-Open the `install.sh` file in a text editor and edit the variables at the top, with the root of your domain (`yourdomain.com`), `REG_CODE` as the code you'll use to register your device, and the path to the pem file you just generated.
+Open the `install.sh` file in a text editor and edit the variables at the top, with the root of your domain (`yourdomain.com`), `REG_CODE` as the code you'll use to register your device (**be sure to change this!**), and the path to the pem file you just generated.
 
 Run `./install.sh` to execute the installer script; it will connect to your VPS (using the `relay.yourdomain.com` IP address) and download and configure all of the software automatically.
 
