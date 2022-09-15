@@ -1,6 +1,6 @@
 # NativePlanet Self-Hosted Relay
 
-This is a self-hostable version of the NativePlanet anchor service.
+This is a self-hostable version of the NativePlanet anchor service. The installer script is meant for Debian/Ubuntu, but it should work on other distros if you comment out the line with the `apt` commands and have Python 3 & Ansible installed. 
 
 ### How to use
 
