@@ -179,14 +179,12 @@ def check_dns(url):
 def reg_client(pubkey,reg_code):
     code_hash = hash(reg_code)
     code_exists = get_value('anchors','uid','reg_id',code_hash)
-    key_exists = get_values('anchors','uid','pubkey',pubkey)
     # If reg code is valid:
     if code_exists != None:
         # Check if it's already assoc with a pubkey
         prev_pubkey = get_value('anchors','pubkey','uid',code_exists)
         # There can only be one
-        if (prev_pubkey != None) and (pubkey != prev_pubkey):
-            for reg in key_exists:
+        if (pubkey != prev_pubkey) and (prev_pubkey != None):
                 # If new pubkey, blank the old one and update the services
                 nul_value('anchors','pubkey','uid',reg)
                 nul_value('anchors','conf','uid',reg)
