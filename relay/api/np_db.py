@@ -422,11 +422,10 @@ def assign_svc(pubkey):
 def port_assign(svc):
     svc_type = get_value('services','svc_type','uid',svc)
     port_exists = get_value('services','port','uid',svc)
-    ipaddr = get_value('endpoints','ipaddr','instanceid',instanceid)
     # Only assign ports to services that don't already have one
     if port_exists == None:
         if svc_type not in ['minio','minio-bucket']:
-            port = port_gen(svc_type,instanceid)
+            port = port_gen(svc_type)
             upd_value('services','port',port,'uid',svc)
         # Make sure s3.{sub} and bucket.s3.{sub} have the same port
         elif svc_type == 'minio-bucket':
@@ -439,5 +438,4 @@ def port_assign(svc):
                 upd_value('services','port',port,'uid',svc)
             else:
                 upd_value('services','port',port,'uid',svc)
-        upd_value('services','ipaddr',ipaddr,'uid',svc)
         upd_value('services','status','creating','uid',svc)
