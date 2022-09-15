@@ -185,14 +185,14 @@ def reg_client(pubkey,reg_code):
         prev_pubkey = get_value('anchors','pubkey','uid',code_exists)
         # There can only be one
         if (pubkey != prev_pubkey) and (prev_pubkey != None):
-                # If new pubkey, blank the old one and update the services
-                nul_value('anchors','pubkey','uid',reg)
-                nul_value('anchors','conf','uid',reg)
-                prev_svc = get_values('services','uid','pubkey',prev_pubkey)
-                if prev_svc != None:
-                    for svc in prev_svc:
-                        upd_value('services','pubkey',pubkey,'uid',svc)
-                        upd_value('services','status','creating','uid',svc)
+            # If new pubkey, blank the old one and update the services
+            nul_value('anchors','pubkey','uid',reg)
+            nul_value('anchors','conf','uid',reg)
+            prev_svc = get_values('services','uid','pubkey',prev_pubkey)
+            if prev_svc != None:
+                for svc in prev_svc:
+                    upd_value('services','pubkey',pubkey,'uid',svc)
+                    upd_value('services','status','creating','uid',svc)
             # Register new pubkey
             upd_value('anchors','status','registered','reg_id',code_hash)
         upd_value('anchors','pubkey',pubkey,'reg_id',code_hash)
