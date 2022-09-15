@@ -301,7 +301,7 @@ def valid_wg(pubkey):
 
 # Determine random unused port for service
 def port_gen(svc_type):
-    exists = get_values('services','port','svc_type',svc_type)
+    port_records = get_values('services','port','svc_type',svc_type)
     if port_records == None:
         port_records = []
     else:
