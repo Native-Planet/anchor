@@ -113,7 +113,8 @@ def remove_url(sub):
         except AttributeError:
             index += 1
     for x in routes[::-1]:
-        api(path=f'apps/http/servers/srv0/routes/{x}', method='DELETE')
+        # api(path=f'apps/http/servers/srv0/routes/{x}', method='DELETE')
+        api_del(path=f'apps/http/servers/srv0/routes/{x}')
     routecount = len(routes)
     if routecount >= 1:
         logging.info(f'[Caddy]: Removed {routecount} {url} subdomain route(s)')
