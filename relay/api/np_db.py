@@ -246,7 +246,7 @@ def rectify_svc_list(pubkey):
             port = svc['port']
             # Add missing DNS entries
             if 'ames.' not in url:
-                dns_check = check_dns(f'url.{root_domain}')
+                dns_check = check_dns(f'{url}.{root_domain}')
                 if dns_check == False:
                     logging.warning('A record does not match public IP!')
             subd = url.removesuffix(f'.{root_domain}')
