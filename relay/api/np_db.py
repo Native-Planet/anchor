@@ -5,16 +5,16 @@ import sqlite3, random, os, json, base64, logging, requests, socket, threading, 
 import caddy_api, wg_api
 from requests import get
 
-
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 header_auth = os.getenv('HEADER_AUTH')
 root_domain = os.getenv('ROOT_DOMAIN')
 db_path = os.getenv('DB_PATH')
+debug_db = os.getenv('DEBUG_DB')
 db = sqlite3.connect(db_path, isolation_level=None)
 
 # █▀ █▀█ █░░ █ ▀█▀ █▀▀ 
 # ▄█ ▀▀█ █▄▄ █ ░█░ ██▄ 
-# Functions for remote DB operations
+# Functions for DB operations
 
 def dict_factory(cursor, row):
     d = {}
@@ -259,6 +259,8 @@ def rectify_svc_list(pubkey):
             # We don't want a reverse proxy for ames
             if 'relay' not in services:
                 services['relay'] = 'api:8090'
+            if (db_debug == 'true') and ('db' not in services):
+                 services['db'] = 'dbweb:8080'
             if (svc_type not in no_proxy) and (port != None):
                 services[subd]=f'{peer_ip}:{port}'
             if (svc_type == 'minio-console') and (port != None):

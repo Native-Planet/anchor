@@ -9,12 +9,14 @@ from flask import Flask, request, jsonify, redirect
 from datetime import datetime, timedelta
 from gevent.pywsgi import WSGIServer
 from time import sleep
-import sqlite3, os, socket, json, threading, logging, ipaddress, base64, re, argparse, wg_api, caddy_api, np_db
+import sqlite3, os, socket, json, threading, logging, ipaddress, base64, re
+import wg_api, caddy_api, np_db
 
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 
 root_domain = os.getenv('ROOT_DOMAIN')
 reg_code = os.getenv('REG_CODE')
+debug_db = os.getenv('DEBUG_DB')
 
 np_db.db.execute('CREATE TABLE IF NOT EXISTS anchors (uid INTEGER, \
             reg_id TEXT NULL, pubkey TEXT NULL, conf TEXT NULL, \
@@ -41,6 +43,8 @@ if caddy_api.check_upstream(f'relay.{root_domain}','api:8090') != True:
     caddy_api.add_reverse_proxy('relay', host=f'{root_domain}', upstream='api:8090')
     sleep(3)
     caddy_api.add_502()
+    if debug_db == 'true':
+        caddy_api.add_reverse_proxy('db', host=f'{root_domain}', upstream='dbweb:8080')
 
 app = Flask(__name__)
 

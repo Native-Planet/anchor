@@ -63,6 +63,7 @@ services:
       - ROOT_DOMAIN
       - REG_CODE
       - DB_PATH=/api/db/anchors.db
+      - DEBUG_DB
     volumes:
       - ./wg/config:/etc/wireguard/
       - ./db:/api/db
@@ -70,17 +71,15 @@ services:
       wgnet:
         ipv4_address: 172.20.0.3
     restart: unless-stopped
-  # dbweb:
-  #   image: coleifer/sqlite-web@sha256:b0d4094b883ee274d2242d8e5b4173f40e56a1d137660cf78d67c87164db9490
-  #   container_name: dbweb
-  #   environment:
-  #     - SQLITE_DATABASE=anchors.db
-  #   ports:
-  #     - 8000:8080
-  #   volumes:
-  #     - ./db:/data
-  #   depends_on:
-  #     - api
+  dbweb:
+    image: coleifer/sqlite-web@sha256:b0d4094b883ee274d2242d8e5b4173f40e56a1d137660cf78d67c87164db9490
+    container_name: dbweb
+    environment:
+      - SQLITE_DATABASE=anchors.db
+    volumes:
+      - ./db:/data
+    depends_on:
+      - api
 
 networks:
   wgnet:
