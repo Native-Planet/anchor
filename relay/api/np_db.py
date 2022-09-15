@@ -246,7 +246,7 @@ def rectify_svc_list(pubkey):
             port = svc['port']
             # Add missing DNS entries
             if 'ames.' not in url:
-                dns_check = check_dns(f'{url}.{root_domain}')
+                dns_check = check_dns(url)
                 if dns_check == False:
                     logging.warning('A record does not match public IP!')
             subd = url.removesuffix(f'.{root_domain}')
@@ -412,10 +412,8 @@ def return_existing(subdomain,pubkey,svc_type):
 
 
 def assign_svc(pubkey):
-    upd_value('anchors','instanceid',instanceid,'pubkey',pubkey)
-    # For each service assigned to this pubkey, assign port + instanceid
-    svc_list = get_values('services','uid','instanceid',instanceid)
+    # For each service assigned to this pubkey, assign port
+    svc_list = get_values('services','uid','pubkey',pubkey)
     for svc in svc_list:
-        port_assign(svc,instanceid)
+        port_assign(svc)
     threading.Thread(target=rectify_svc_list, name='rectify', args=(pubkey,)).start()
-    return instanceid
