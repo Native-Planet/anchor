@@ -6,7 +6,8 @@ This is a self-hostable version of the NativePlanet anchor service.
 
 You'll need set a few things up ahead of time:
 
-- Spin up a VPS and make note of the IP address
+- Spin up a VPS (e.g. [DigitalOcean](https://m.do.co/c/94f7fdc03fad) or [Vultr](https://vultr.com))and make note of the IP address
+  - This package is designed to run on Ubuntu 22.04; it works fine with $5 1GB/1CPU instances
 - Register a domain (you can re-use an existing one, you'll only be using subdomains)
 
 Create the following 5 `A` records for your domain, assigned to your VPS's IP address:
@@ -20,7 +21,7 @@ If you want to run multiple ships or MinIO instances, create new subdomains for 
 
 Make sure you can connect to the VPS over SSH as root with a `.pem` SSH public key.
 - If you don't have a `.pem` file, you can generate one with `ssh-keygen -t ed25519 -m PEM`
-- Copy the public key for your `.pem` file with `ssh-keygen -f /path/to/key.pem -y`
+- Get the public key for your `.pem` file with `ssh-keygen -f /path/to/key.pem -y`
 - Connect to your VPS, and use `sudo su -` to switch to `root`
 - Open `/root/.ssh/authorized_keys` in a text editor and paste in the public key for your key
 - Run `systemctl restart sshd`
