@@ -8,6 +8,7 @@
 from flask import Flask, request, jsonify, redirect
 from datetime import datetime, timedelta
 from gevent.pywsgi import WSGIServer
+from time import sleep
 import sqlite3, os, socket, json, threading, logging, ipaddress, base64, re, argparse, wg_api, caddy_api, np_db
 
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
@@ -40,6 +41,7 @@ else:
 # Register subdomain for node API
 if caddy_api.check_upstream(f'relay.{root_domain}','api:8090') != True:
     caddy_api.add_reverse_proxy('relay', host=f'{root_domain}', upstream='api:8090')
+    sleep(3)
     caddy_api.add_502()
 
 app = Flask(__name__)

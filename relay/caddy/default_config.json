@@ -9,7 +9,7 @@
         "grace_period":2000000000,
         "servers": {
           "srv0": {
-            "listen": [":443"],
+            "listen": [":80",":443"],
             "routes": [
             ],
             "automatic_https": {
