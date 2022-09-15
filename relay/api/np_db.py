@@ -24,19 +24,19 @@ def dict_factory(cursor, row):
 
 # Create DB record for new client
 def add_reg(reg_code):
-    sub_id = hash(reg_code)
-    exists = get_value('anchors','uid','sub_id',sub_id)
+    reg_id = hash(reg_code)
+    exists = get_value('anchors','uid','reg_id',reg_id)
     if exists == None:
         timestamp = datetime.now()
         conn = sqlite3.connect(db_path, isolation_level=None)
         conn.execute('pragma journal_mode=wal;')
-        query = f'INSERT INTO anchors (sub_id, created, last_mod) \
-                VALUES ("{sub_id}", "{timestamp}", \
+        query = f'INSERT INTO anchors (reg_id, created, last_mod) \
+                VALUES ("{reg_id}", "{timestamp}", \
                 "{timestamp}");'
         cur = conn.cursor()
         cur.execute(query)
         conn.commit()
-        logging.info(f"• [DB:anchors] CREATE slot {sub_id} @ {timestamp}")
+        logging.info(f"• [DB:anchors] CREATE slot {reg_id} @ {timestamp}")
 
 # ex: update `last_mod` for `pubkey` = `<whatever>`
 # identifies row by pubkey
@@ -178,7 +178,7 @@ def check_dns(url):
 # Register pubkey with reg code & update prev services
 def reg_client(pubkey,reg_code):
     code_hash = hash(reg_code)
-    code_exists = get_value('anchors','uid','sub_id',code_hash)
+    code_exists = get_value('anchors','uid','reg_id',code_hash)
     key_exists = get_values('anchors','uid','pubkey',pubkey)
     # If reg code is valid:
     if code_exists != None:
@@ -196,8 +196,8 @@ def reg_client(pubkey,reg_code):
                         upd_value('services','pubkey',pubkey,'uid',svc)
                         upd_value('services','status','creating','uid',svc)
             # Register new pubkey
-            upd_value('anchors','status','registered','sub_id',code_hash)
-        upd_value('anchors','pubkey',pubkey,'sub_id',code_hash)
+            upd_value('anchors','status','registered','reg_id',code_hash)
+        upd_value('anchors','pubkey',pubkey,'reg_id',code_hash)
         upd_value('services','status','creating','pubkey',pubkey)
         threading.Thread(target=rectify_svc_list, name='rectify', args=(pubkey,)).start()
         error = 0

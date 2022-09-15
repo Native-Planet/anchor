@@ -17,15 +17,13 @@ root_domain = os.getenv('ROOT_DOMAIN')
 reg_code = os.getenv('REG_CODE')
 
 np_db.db.execute('CREATE TABLE IF NOT EXISTS anchors (uid INTEGER, \
-            sub_id TEXT NULL, pubkey TEXT NULL, conf TEXT NULL, \
-            status TEXT NULL, \
-            created TIMESTAMP NULL, last_mod TIMESTAMP NULL, \
-            PRIMARY KEY ("uid" AUTOINCREMENT) );')
+            reg_id TEXT NULL, pubkey TEXT NULL, conf TEXT NULL, \
+            status TEXT NULL, created TIMESTAMP NULL, \
+            last_mod TIMESTAMP NULL, PRIMARY KEY ("uid" AUTOINCREMENT) );')
 np_db.db.execute('CREATE TABLE IF NOT EXISTS services (uid INTEGER, \
             pubkey TEXT NULL, port INTEGER NULL, subdomain TEXT NULL, \
-            svc_type TEXT NULL, ipaddr TEXT NULL, \
-            status TEXT NULL, created TIMESTAMP NULL, last_mod TIMESTAMP NULL, \
-            PRIMARY KEY ("uid" AUTOINCREMENT) );')
+            svc_type TEXT NULL, status TEXT NULL, created TIMESTAMP NULL, \
+            last_mod TIMESTAMP NULL, PRIMARY KEY ("uid" AUTOINCREMENT) );')
 
 dns_check = np_db.check_dns(f'relay.{root_domain}')
 if dns_check == False:
