@@ -10,6 +10,7 @@ header_auth = os.getenv('HEADER_AUTH')
 root_domain = os.getenv('ROOT_DOMAIN')
 db_path = os.getenv('DB_PATH')
 debug_db = os.getenv('DEBUG_DB')
+lease = '2099-12-31'
 db = sqlite3.connect(db_path, isolation_level=None)
 
 # █▀ █▀█ █░░ █ ▀█▀ █▀▀ 
@@ -208,7 +209,8 @@ def reg_client(pubkey,reg_code):
     result = {
         'error':error,
         'debug':debug,
-        'reqstatus':reqstatus
+        'reqstatus':reqstatus,
+        'lease':lease
     }
     return result
 
@@ -374,7 +376,8 @@ def new_pass(subdomain,pubkey,svc_type):
         'subdomain':subdomain,
         'svc_type':svc_type,
         'pubkey':pubkey,
-        'status':'creating'}
+        'status':'creating',
+        'lease':lease}
     return response
 
 # Return an existing client (/create)
@@ -387,7 +390,8 @@ def return_existing(subdomain,pubkey,svc_type):
         'subdomain':subdomain,
         'svc_type':svc_type,
         'pubkey':pubkey,
-        'status':'exists'}
+        'status':'exists',
+        'lease':lease}
     return response
 
 

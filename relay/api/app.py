@@ -73,7 +73,8 @@ def register_client():
         action = 'register',
         debug = result['debug'],
         error = result['error'],
-        pubkey = pubkey
+        pubkey = pubkey,
+        lease = np_db.lease
     ),result['reqstatus']
 
 
@@ -126,7 +127,8 @@ def retrieve_info():
     'error':error,
     'pubkey':pubkey,
     'status':status,
-    'subdomains':subdomains}
+    'subdomains':subdomains,
+    'lease': np_db.lease}
     return jsonify(response),reqstatus
 
 # Route to create anchor instance record
