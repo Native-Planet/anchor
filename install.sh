@@ -7,7 +7,7 @@ HEADER_AUTH=$(echo $RANDOM | md5sum | head -c 20)
 if grep -Fxq "edit_me!" settings.sh
 then
     echo "Please edit settings.sh with your settings"
-    exit
+    return
 fi
 if command -v apt &> /dev/null
 then
@@ -17,13 +17,17 @@ then
     if ! command -v python3 &> /dev/null
         then
         echo "Please install Python 3"
-        exit
+        return
     elif ! command -v ansible-playbook &> /dev/null
         then
         echo "Please install Ansible"
-        exit
+        return
     fi
 fi
+host -t A relay.${ROOT_DOMAIN} | grep "has address" >/dev/null ||     {
+    echo "no DNS records for relay.${ROOT_DOMAIN}!"
+    return
+}
 chmod 600 ${SSH_KEY}
 mkdir -p /home/ubuntu/.ssh
 SSH_PUB=`ssh-keygen -f ${SSH_KEY} -y`
