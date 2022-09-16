@@ -20,6 +20,7 @@ then
     fi
 fi
 chmod 600 ${SSH_KEY}
+mkdir -p /home/ubuntu/.ssh
 SSH_PUB=`ssh-keygen -f ${SSH_KEY} -y`
 printf "[relay]\nrelay.${ROOT_DOMAIN}\n\n[relay:vars]\nansible_user=\"root\"\nansible_ssh_private_key_file=${SSH_KEY}" > hosts
 ssh-keyscan -H relay.${ROOT_DOMAIN} >> ~/.ssh/known_hosts

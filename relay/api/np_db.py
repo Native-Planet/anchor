@@ -227,6 +227,8 @@ def rectify_svc_list(pubkey):
     svc_list, caddy_list = ['relay'], []
     services, minios = {}, {}
     peerlist = wg_api.peer_list()
+    if wg_api.check_peer(pubkey) == True:
+        client = [pubkey]
     del_peers = []
     svcs = get_client_svcs(pubkey)
     peer_ip = wg_api.check_peer(pubkey)
@@ -281,6 +283,13 @@ def rectify_svc_list(pubkey):
             if caddy_api.check_upstream(subd,upstr) == False:
                 caddy_api.add_reverse_proxy(subd, host=f'{root_domain}',upstream=upstr)
                 sleep(3)
+
+        # Delete pubkeys that aren't registered
+        for peer in peerlist:
+            if peer not in client:
+                del_peers.append(peer)
+        if del_peers != []:
+            wg_api.del_peer(del_peers)
 
         # Validate upstream for minios
         for subd in minios:
