@@ -213,7 +213,7 @@
         command: docker-compose up -d
         become: yes
         args:
-          chdir: "{{ ansible_env.HOME }}/relay/relay"
+          chdir: "{{ ansible_env.HOME }}/relay"
     
       - name: Allow HTTP
         ufw:
