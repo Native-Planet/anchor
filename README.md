@@ -34,7 +34,7 @@ git clone https://github.com/Native-Planet/relay.git
 cd relay
 ```
 
-Open the `settings.sh` file in a text editor and edit the variables, with the root of your domain (`yourdomain.com`), `REG_CODE` as the code you'll use to register your device (**be sure to change this!**), and the path to the pem file you just generated. You can optionally enable a DB visualizer for debugging, but you can safely ignore it (not safe to leave on routinely).
+Open the `settings.sh` file in a text editor and edit the variables, with the root of your domain (`yourdomain.com`), `REG_CODE` as the code you'll use to register your device (**be sure to change this!**), and the path to the pem file you just generated.
 
 Run `./install.sh` to execute the installer script; it will connect to your VPS (using the `relay.yourdomain.com` IP address) and download and configure all of the software automatically. Wait until the ansible playbook has completed -- this might take a few minutes on low-spec servers.
 

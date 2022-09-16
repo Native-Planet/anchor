@@ -4,5 +4,3 @@ ROOT_DOMAIN=nativeplanet.live
 REG_CODE=Establish5.Riddance.Unsalted
 # Path to the SSH key for your VPS
 SSH_KEY="/home/reid/gits/relay/key.pem"
-# Enable DB explorer for debugging (true to enable)
-#DEBUG_DB=false

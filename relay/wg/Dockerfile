@@ -5,9 +5,7 @@ RUN apt update && apt install webhook
 COPY ./hooks.json /etc/webhook/hooks.json
 COPY ./restart.sh /etc/webhook/restart.sh
 RUN chmod +x /etc/webhook/restart.sh
-ARG HEADER_AUTH 
-ENV HOOK_AUTH=$HEADER_AUTH
-RUN sed -i '36 i sed -i "s|HOOK_AUTH|${HEADER_AUTH}|g" /etc/webhook/hooks.json' /init
+RUN sed -i '36 i sed -i "s|HOOK_AUTH|\${HEADER_AUTH}|g" /etc/webhook/hooks.json' /init
 RUN sed -i '37 i webhook -hooks /etc/webhook/hooks.json -verbose &' /init
 # curl http://172.20.0.2:9000/hooks/restart-wg?token={hook_auth}
 # Uses the same token as private API auth, only accepts calls from API IP
