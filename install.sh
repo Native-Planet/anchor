@@ -4,6 +4,11 @@
 ######
 source ./settings.sh
 HEADER_AUTH=$(echo $RANDOM | md5sum | head -c 20)
+if grep -Fxq "edit_me!" settings.sh
+then
+    echo "Please edit settings.sh with your settings"
+    exit
+fi
 if command -v apt &> /dev/null
 then
     sudo apt update && sudo apt install -y python3 ansible
