@@ -1,4 +1,4 @@
-# NativePlanet Self-Hosted Relay
+# NativePlanet Self-Hosted anchor
 
 This is a self-hostable version of the NativePlanet anchor service. The installer script is meant to be run on Debian/Ubuntu, but it should work on other distros if you have Python 3 & Ansible installed. 
 
@@ -11,14 +11,14 @@ You'll need set a few things up ahead of time:
 - Register a domain (you can re-use an existing one, you'll only be using subdomains)
 
 Create the following 5 `A` records for your domain, assigned to your VPS's IP address:
-  - `relay.yourdomain.com`
+  - `anchor.yourdomain.com`
   - `ship-name.yourdomain.com`
   - `s3.ship-name.yourdomain.com`
   - `console.s3.ship-name.yourdomain.com`
   - `bucket.s3.ship-name.yourdomain.com`
   - Optional: `db.yourdomain.com` (for debugging)
 
-If you want to run multiple ships or MinIO instances, create new subdomains for them (you only need one `relay` record).
+If you want to run multiple ships or MinIO instances, create new subdomains for them (you only need one `anchor` record).
 
 Make sure you can connect to the VPS over SSH as root with a `.pem` SSH public key.
 - If you don't have a `.pem` file, you can generate one with `ssh-keygen -t ed25519 -m PEM`
@@ -27,15 +27,15 @@ Make sure you can connect to the VPS over SSH as root with a `.pem` SSH public k
 - Open `/root/.ssh/authorized_keys` in a text editor and paste in the public key for your key
 - Run `systemctl restart sshd`
 
-Clone this git repository:
+Clone this git repository on your local computer:
 
 ```
-git clone https://github.com/Native-Planet/relay.git
-cd relay
+git clone https://github.com/Native-Planet/anchor.git
+cd anchor
 ```
 
 Open the `settings.sh` file in a text editor and edit the variables, with the root of your domain (`yourdomain.com`), `REG_CODE` as the code you'll use to register your device (**be sure to change this!**), and the path to the pem file you just generated.
 
-Run `./install.sh` to execute the installer script; it will connect to your VPS (using the `relay.yourdomain.com` IP address) and download and configure all of the software automatically. Wait until the ansible playbook has completed -- this might take a few minutes on low-spec servers.
+Run `./install.sh` to execute the installer script; it will connect to your VPS (using the `anchor.yourdomain.com` IP address) and download and configure all of the software automatically. Wait until the ansible playbook has completed -- this might take a few minutes on low-spec servers.
 
-On your NativePlanet, go to the settings menu and under the Anchor submenu, select 'custom endpoint' and enter `relay.yourdomain.com`.
+On your NativePlanet, go to the settings menu and under the Anchor submenu, select 'custom endpoint' and enter `anchor.yourdomain.com`.

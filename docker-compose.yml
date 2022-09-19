@@ -2,7 +2,7 @@
 version: "3.3"
 services:
   wireguard:
-    image: nativeplanet/relay-wg:latest
+    image: nativeplanet/anchor-wg:latest
     container_name: wg
     cap_add:
       - NET_ADMIN
@@ -31,7 +31,7 @@ services:
         ipv4_address: 172.20.0.2
     restart: unless-stopped
   caddy:
-    image: nativeplanet/relay-caddy:latest
+    image: nativeplanet/anchor-caddy:latest
     cap_add:
       - NET_ADMIN
     container_name: caddy
@@ -47,7 +47,7 @@ services:
         ipv4_address: 172.20.0.4
     restart: unless-stopped
   api:
-    image: nativeplanet/relay-api:latest
+    image: nativeplanet/anchor-api:latest
     depends_on:
       - wireguard
       - caddy
