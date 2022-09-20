@@ -173,12 +173,12 @@
         remote_user: root
         shell: printf 'HEADER_AUTH={{ HEADER_AUTH }}\n
           ROOT_DOMAIN={{ ROOT_DOMAIN }}\n
-          REG_CODE={{ REG_CODE }}' > "{{ ansible_env.HOME }}/anchor/relay/.env"
+          REG_CODE={{ REG_CODE }}' > "{{ ansible_env.HOME }}/anchor/.env"
     
       - name: Remove leading spaces from env file
         remote_user: root
         ansible.builtin.replace:
-          path: "{{ ansible_env.HOME }}/anchor/relay/.env"
+          path: "{{ ansible_env.HOME }}/anchor/.env"
           regexp: '^[ \t]*'
           replace: ''
     
@@ -191,12 +191,12 @@
           docker-compose down\n
           git pull\n
           docker-compose up --build -d\n
-          docker logs api -f' > "{{ ansible_env.HOME }}/anchor/relay/rebuild"
+          docker logs api -f' > "{{ ansible_env.HOME }}/anchor/rebuild"
     
       - name: Remove leading spaces from rebuild script
         remote_user: root
         ansible.builtin.replace:
-          path: "{{ ansible_env.HOME }}/anchor/relay/rebuild"
+          path: "{{ ansible_env.HOME }}/anchor/rebuild"
           regexp: '^[ \t]*'
           replace: ''
     
@@ -206,7 +206,7 @@
     
       - name: +x rebuild
         file:
-          dest: "{{ ansible_env.HOME }}/anchor/relay/rebuild"
+          dest: "{{ ansible_env.HOME }}/anchor/rebuild"
           mode: a+x
     
       - name: Execute composition
