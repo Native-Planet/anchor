@@ -1,5 +1,5 @@
 ---
-    - hosts: relay
+    - hosts: anchor
       become: yes
       environment:
         ROOT_DOMAIN: "{{ ROOT_DOMAIN }}"
@@ -202,7 +202,7 @@
     
       - name: Write to bashrc
         remote_user: root
-        shell: printf 'cd {{ ansible_env.HOME }}/anchor/ && ./logs' >> "{{ ansible_env.HOME }}/.bashrc"
+        shell: printf 'docker logs api -f\n' >> "{{ ansible_env.HOME }}/.bashrc"
     
       - name: +x rebuild
         file:
