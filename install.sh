@@ -38,7 +38,7 @@ ssh -i ${SSH_KEY} -o "StrictHostKeyChecking=no" \
 ssh -i ${SSH_KEY} -o "StrictHostKeyChecking=no" \
         root@anchor.${ROOT_DOMAIN} "systemctl restart sshd"
 ssh -i ${SSH_KEY} root@anchor.${ROOT_DOMAIN} \
-        "echo \"${SSH_PUB}\" >> /home/ubuntu/.ssh/authorized_keys && echo \"${SSH_PUB}\" >> ~/.ssh/authorized_keys"
+        "echo \"${SSH_PUB}\" >> /root/.ssh/authorized_keys && echo \"${SSH_PUB}\" >> ~/.ssh/authorized_keys"
 ansible-playbook --key-file ${SSH_KEY} \
     -i ./hosts -e "ROOT_DOMAIN=${ROOT_DOMAIN} \
     HEADER_AUTH=${HEADER_AUTH} REG_CODE=${REG_CODE} DEBUG_DB=${DEBUG_DB} \
