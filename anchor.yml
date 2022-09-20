@@ -164,7 +164,7 @@
         remote_user: root
         git:
           repo: "https://github.com/Native-Planet/anchor.git"
-          dest: "{{ ansible_env.HOME }}/relay"
+          dest: "{{ ansible_env.HOME }}/anchor"
           version: master
           accept_hostkey: yes
           key_file: "{{ ansible_env.HOME }}/.ssh/key.pem"
@@ -202,7 +202,7 @@
     
       - name: Write to bashrc
         remote_user: root
-        shell: printf 'cd {{ ansible_env.HOME }}/anchor/relay && ./logs' >> "{{ ansible_env.HOME }}/.bashrc"
+        shell: printf 'cd {{ ansible_env.HOME }}/anchor/ && ./logs' >> "{{ ansible_env.HOME }}/.bashrc"
     
       - name: +x rebuild
         file:
@@ -213,7 +213,7 @@
         command: docker-compose up -d
         become: yes
         args:
-          chdir: "{{ ansible_env.HOME }}/relay"
+          chdir: "{{ ansible_env.HOME }}/anchor"
     
       - name: Allow HTTP
         ufw:
