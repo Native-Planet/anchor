@@ -4,7 +4,7 @@
 ######
 source ./settings.sh
 HEADER_AUTH=$(echo $RANDOM | md5sum | head -c 20)
-if grep -Fxq "edit_me!" settings.sh
+if grep -Fxq "CHANGE_ME!" settings.sh
 then
     echo "Please edit settings.sh with your settings"
     return
