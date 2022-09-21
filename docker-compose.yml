@@ -11,7 +11,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/London
-      - SERVERURL=${ROOT_DOMAIN}
+      - SERVERURL=anchor.${ROOT_DOMAIN}
       - SERVERPORT=51820
       - PEERS=1
       - PEERDNS=1.1.1.1
