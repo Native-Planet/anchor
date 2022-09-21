@@ -29,7 +29,7 @@ host -t A anchor.${ROOT_DOMAIN} | grep "has address" >/dev/null ||     {
     return
 }
 chmod 600 ${SSH_KEY}
-mkdir -p /home/$(whoami)/.ssh
+mkdir -p ~/.ssh
 SSH_PUB=`ssh-keygen -f ${SSH_KEY} -y`
 printf "[anchor]\nanchor.${ROOT_DOMAIN}\n\n[anchor:vars]\nansible_user=\"root\"\nansible_ssh_private_key_file=${SSH_KEY}" > hosts
 ssh-keyscan -H anchor.${ROOT_DOMAIN} >> ~/.ssh/known_hosts
