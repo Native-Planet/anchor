@@ -8,6 +8,7 @@ You'll need set a few things up ahead of time:
 
 - Spin up a VPS (e.g. [DigitalOcean](https://m.do.co/c/94f7fdc03fad) or [Vultr](https://www.vultr.com/?ref=9235764)) and make note of the IP address
   - This package is designed to run on Ubuntu 22.04; it works well with typical ~$5 1GB/1CPU instances though could work reasonably on a 512MB/1CPU instance.
+  - The playbook will automatically provision 2GB swap -- this doesn't work on some hosts, so if it breaks it, just comment out those lines and try again.
 - Register a domain (you can re-use an existing one, you'll only be using subdomains)
 
 Create the following 5 `A` records for your domain, assigned to your VPS's IP address:
