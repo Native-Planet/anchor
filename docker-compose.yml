@@ -41,7 +41,6 @@ services:
     volumes:
       - ./caddy/data:/data
       - ./caddy/config:/config/caddy
-      - ./caddy/www:/www
     networks:
       wgnet:
         ipv4_address: 172.20.0.4
