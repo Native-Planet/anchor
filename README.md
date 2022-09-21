@@ -33,7 +33,7 @@ git clone https://github.com/Native-Planet/anchor.git
 cd anchor
 ```
 
-Open the `settings.sh` file in a text editor and edit the variables, with the root of your domain (`yourdomain.com`), `REG_CODE` as the code you'll use to register your device (🚨**change this!**🚨), and the path to the pem file you just generated.
+Open the `settings.sh` file in a text editor and edit the variables, with the root of your domain (`yourdomain.com`), `REG_CODE` as the code you'll use to register your device (🚨 **change this!** 🚨), and the path to the pem file you just generated.
 
 Run `./install.sh` to execute the installer script; it will connect to your VPS (using the `anchor.yourdomain.com` IP address) and download and configure all of the software automatically. Wait until the ansible playbook has completed -- this might take a few minutes on low-spec servers.
 
