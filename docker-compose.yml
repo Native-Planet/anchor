@@ -30,6 +30,8 @@ services:
       wgnet:
         ipv4_address: 172.20.0.2
     restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
   caddy:
     image: nativeplanet/anchor-caddy:latest
     cap_add:
@@ -45,6 +47,8 @@ services:
       wgnet:
         ipv4_address: 172.20.0.4
     restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
   api:
     image: nativeplanet/anchor-api:latest
     depends_on:
@@ -64,6 +68,21 @@ services:
       wgnet:
         ipv4_address: 172.20.0.3
     restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+  watchtower:
+    image: containrrr/watchtower
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_LABEL_ENABLE=true
+      - WATCHTOWER_INCLUDE_RESTARTING=true
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
   # dbweb:
   #   image: coleifer/sqlite-web@sha256:b0d4094b883ee274d2242d8e5b4173f40e56a1d137660cf78d67c87164db9490
   #   container_name: dbweb
