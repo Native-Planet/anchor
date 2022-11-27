@@ -166,8 +166,6 @@
           repo: "https://github.com/Native-Planet/anchor.git"
           dest: "{{ ansible_env.HOME }}/anchor"
           version: master
-          accept_hostkey: yes
-          key_file: "{{ ansible_env.HOME }}/.ssh/key.pem"
     
       - name: Write env vars
         remote_user: root
