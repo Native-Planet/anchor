@@ -20,9 +20,10 @@ Create the following 5 `A` records for your domain, assigned to your VPS's IP ad
 
 If you want to run multiple ships, create new subdomains for them (you only need one `anchor` record).
 
-Make sure you can connect to the VPS over SSH as root with a `.pem` SSH public key.
-- If you don't have a `.pem` file, you can generate one with `ssh-keygen -t ed25519 -m PEM`
-- Get the public key for your `.pem` file with `ssh-keygen -f /path/to/key.pem -y`
+Make sure you can connect to the VPS over SSH as root with an SSH key.
+- If you don't have a key, you can generate one with `ssh-keygen -t ed25519 -m PEM -f id_ed25519`
+- Copy the contents of your public key from `id_ed25519.pub`
+- Get the public key for your keyfile with `ssh-keygen -f ./id_ed25519 -y` if you don't see one
 - Connect to your VPS, and use `sudo su -` to switch to `root`
 - Open `/root/.ssh/authorized_keys` in a text editor and paste in the public key for your key
 - Run `systemctl restart sshd`

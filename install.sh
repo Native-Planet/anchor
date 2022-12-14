@@ -3,11 +3,11 @@
 # Don't edit below
 ######
 source ./settings.sh
-HEADER_AUTH=$(echo $RANDOM | md5sum | head -c 20)
+HEADER_AUTH=$(openssl rand -hex 20)
 if grep -Fxq "CHANGE_ME!" settings.sh
 then
     echo "Please edit settings.sh with your settings"
-    return
+    exit 1
 fi
 if command -v apt &> /dev/null
 then
@@ -17,16 +17,16 @@ then
     if ! command -v python3 &> /dev/null
         then
         echo "Please install Python 3"
-        return
+        exit 1
     elif ! command -v ansible-playbook &> /dev/null
         then
         echo "Please install Ansible"
-        return
+        exit 1
     fi
 fi
 host -t A anchor.${ROOT_DOMAIN} | grep "has address" >/dev/null ||     {
     echo "no DNS records for anchor.${ROOT_DOMAIN}!"
-    return
+    exit 1
 }
 chmod 600 ${SSH_KEY}
 mkdir -p ~/.ssh
