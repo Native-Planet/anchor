@@ -1,3 +1,5 @@
+![](https://nyc3.digitaloceanspaces.com/startram/anchor.png)
+
 # NativePlanet Self-Hosted anchor
 
 This is a self-hostable version of the NativePlanet anchor service. The installer script is meant to be run on Debian/Ubuntu, but it should work on other distros if you have Python 3 & Ansible installed. 
