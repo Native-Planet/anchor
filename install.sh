@@ -36,7 +36,7 @@ ssh-keyscan -H anchor.${ROOT_DOMAIN} >> ~/.ssh/known_hosts
 ssh -i ${SSH_KEY} -o "StrictHostKeyChecking=no" \
         root@anchor.${ROOT_DOMAIN} "sed -i 's@PasswordAuthentication yes@PasswordAuthentication no@g' /etc/ssh/sshd_config"
 ssh -i ${SSH_KEY} -o "StrictHostKeyChecking=no" \
-        root@anchor.${ROOT_DOMAIN} "systemctl restart sshd"
+        root@anchor.${ROOT_DOMAIN} "systemctl restart ssh"
 ssh -i ${SSH_KEY} root@anchor.${ROOT_DOMAIN} \
         "echo \"${SSH_PUB}\" >> /root/.ssh/authorized_keys && echo \"${SSH_PUB}\" >> ~/.ssh/authorized_keys"
 ansible-playbook --key-file ${SSH_KEY} \
