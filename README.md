@@ -1,8 +1,10 @@
 ![](https://nyc3.digitaloceanspaces.com/startram/anchor.png)
 
-# NativePlanet Self-Hosted anchor
+# Native Planet self-hosted Anchor
 
-This is a self-hostable version of the NativePlanet anchor service. The installer script is meant to be run on Debian/Ubuntu, but it should work on other distros if you have Python 3 & Ansible installed. 
+This is a self-hostable version of the NativePlanet anchor service, a single-tenant version of the subscription StarTram service. Anchor is meant to host a single [GroundSeg](https://nativeplanet.io/software) client, but there are no limits on the number of piers it can host. The installer script is meant to be run on Debian/Ubuntu, but it should work on other distros if you have Python 3 & Ansible installed. 
+
+Credit for initial concept due to [odyslam](https://github.com/odyslam), implemented by Native Planet
 
 ### How to use
 
